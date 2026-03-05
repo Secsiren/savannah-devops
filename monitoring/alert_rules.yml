@@ -1,0 +1,20 @@
+groups:
+  - name: savannah_alerts
+    rules:
+      - alert: AppDown
+        expr: up{job="savannah-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application is down!"
+          description: "Savannah app has been down for more than 1 minute."
+
+      - alert: HighResponseTime
+        expr: http_request_duration_seconds_avg > 0.5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time detected"
+          description: "Response time is above 500ms for 2 minutes."
