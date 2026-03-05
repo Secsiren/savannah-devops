@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Savannah DevOps App</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+        .card { background: white; padding: 40px; border-radius: 10px; display: inline-block; }
+        h1 { color: #2c3e50; }
+        .env { color: #27ae60; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 Savannah DevOps Assessment</h1>
+        <p>App is running in <span class="env">{{ env }}</span> mode</p>
+        <p>Health check: <a href="/health">/health</a></p>
+    </div>
+</body>
+</html>
