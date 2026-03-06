@@ -1,0 +1,73 @@
+---
+- name: Configure DevOps Server
+  hosts: devops
+  become: yes
+
+  tasks:
+    - name: Create devops group
+      group:
+        name: devops
+        state: present
+
+    - name: Add user to devops group
+      user:
+        name: "{{ ansible_user }}"
+        groups: devops
+        append: yes
+
+    - name: Copy config file to /opt/
+      copy:
+        src: config.txt
+        dest: /opt/config.txt
+        owner: root
+        group: devops
+        mode: '0660'
+
+    - name: Install PostgreSQL
+      apt:
+        name: postgresql
+        state: latest
+        update_cache: yes
+
+    - name: Ensure PostgreSQL is running
+      service:
+        name: postgresql
+        state: started
+        enabled: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: latest
+
+    - name: Ensure Nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Configure Nginx
+      copy:
+        dest: /etc/nginx/sites-available/savannah
+        content: |
+          server {
+              listen 80;
+              server_name localhost;
+              location / {
+                  proxy_pass http://localhost:5000;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+              }
+          }
+        mode: '0644'
+
+    - name: Enable Nginx site
+      file:
+        src: /etc/nginx/sites-available/savannah
+        dest: /etc/nginx/sites-enabled/savannah
+        state: link
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
